@@ -32,8 +32,6 @@ def local_css():
 
 local_css()
 
-google_creds = st.secrets["google"]
-
 # ---- Lottie Loader Function ----
 def load_lottieurl(url:str):
     r = requests.get(url)
@@ -136,14 +134,18 @@ if page == "Home":
 # ---- About Page ----
 elif page == "About":
 
+
+    google_creds = st.secrets["google"]
+
     scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',
          "https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
 
-    creds = ServiceAccountCredentials.from_json_keyfile_name("fable-user-storage-4882c2859ea2.json", scope)
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(google_creds, scope)
     client = gspread.authorize(creds)
 
 
     sheet = client.open("Fable user accounts").sheet1
+    
     st.title("📖 About Semantic Book Recommender")
     st_lottie(book_lottie, height=180, key="about")
 
