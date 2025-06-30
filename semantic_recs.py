@@ -28,7 +28,6 @@ documents = text_splitter.split_documents(raw_documents)
 db_books= Chroma.from_documents(
     documents,
     embedding=huggingface_embeddings,
-    persist_directory="./chroma_db"
 )
 
 def retrieve_semantic_recs(
