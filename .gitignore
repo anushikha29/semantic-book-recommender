@@ -15,3 +15,6 @@ venv/
 chroma_books_db/
 
 .DS_Store
+
+*.json
+chroma_db/

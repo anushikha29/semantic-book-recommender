@@ -6,26 +6,29 @@ from langchain_text_splitters import CharacterTextSplitter #will split all the d
 from langchain.embeddings import HuggingFaceEmbeddings #converting the chunks into document embeddings
 from langchain_chroma import Chroma #storing them in a vector database
 
-import gradio as gr
-
 huggingface_embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
 
-books = pd.read_csv("books_with_emotions.csv")
+def load_books_data():
+    return pd.read_csv("books_with_emotions.csv")
+
+books = load_books_data()
+
 books["large_thumbnail"] = books["thumbnail"] + "&fife=w800"
 
 books["large_thumbnail"] = np.where(
     books["large_thumbnail"].isna(),
-    "cover-not-found.jpg",
+    "no-cover-found.jpg",
     books["large_thumbnail"]
 )
 
 raw_documents = TextLoader("tagged_description.txt").load()
 text_splitter = CharacterTextSplitter(chunk_size=0, chunk_overlap=0, separator="\n")
 documents = text_splitter.split_documents(raw_documents)
-db_books = Chroma.from_documents(
+db_books= Chroma.from_documents(
     documents,
-    embedding=huggingface_embeddings
+    embedding=huggingface_embeddings,
+    persist_directory="./chroma_db"
 )
 
 def retrieve_semantic_recs(
@@ -49,15 +52,15 @@ def retrieve_semantic_recs(
     if tone == "Happy":
         book_recs.sort_values(by="joy", ascending=False, inplace=True)
     elif tone == "Surprising":
-        book_recs.sort_values(by="joy", ascending=False, inplace=True)
+        book_recs.sort_values(by="surprise", ascending=False, inplace=True)
     elif tone == "Angry":
-        book_recs.sort_values(by="joy", ascending=False, inplace=True)
+        book_recs.sort_values(by="anger", ascending=False, inplace=True)
     elif tone == "Suspenseful":
-        book_recs.sort_values(by="joy", ascending=False, inplace=True)
+        book_recs.sort_values(by="fear", ascending=False, inplace=True)
     elif tone == "Sad":
-        book_recs.sort_values(by="joy", ascending=False, inplace=True)
-    elif tone == "Disgust":
-        book_recs.sort_values(by="joy", ascending=False, inplace=True)
+        book_recs.sort_values(by="sadness", ascending=False, inplace=True)
+    elif tone == "Disturbing":
+        book_recs.sort_values(by="disgust", ascending=False, inplace=True)
     
     return book_recs
 
@@ -89,27 +92,4 @@ def recommend_books(
     return results
 
 categories = ["All"] + sorted(books["simple_categories"].unique())
-tones = ["All"] + ["Happy", "Surprising", "Angry", "Suspenseful", "Sad"]
-
-with gr.Blocks(theme=gr.themes.Glass()) as dashboard:
-    gr.Markdown("# Semantic Book Recommender")
-
-    with gr.Column():
-        user_query = gr.Textbox(label= "Please enter a descriptoin of a book:",
-                                placeholder= "e.g. A story about forgiveness")
-        
-        category_dropdown = gr.Dropdown(choices=categories,label="Select a category:", value="All")
-        tone_dropdown = gr.Dropdown(choices=tones,label="Select an emotional tone:", value="All")
-        submit_button = gr.Button("Find Recommendation")
-
-
-        gr.Markdown("## Recommendations")
-        output = gr.Gallery(label = "Recommend books", columns = 8, rows = 2)
-
-        submit_button.click(fn = recommend_books,
-                            inputs=[user_query,category_dropdown,tone_dropdown],
-                            outputs=output)
-
-
-if __name__ == "__main__":
-    dashboard.launch()
+tones = ["All"] + ["Happy", "Surprising", "Angry", "Suspenseful", "Sad", "Disturbing"]
