@@ -20,7 +20,7 @@ A semantic, emotion-aware book recommender system using Hugging Face, LangChain,
 - Python
 - Hugging Face (Transformers, sentence-transformers)
 - LangChain
-- Chroma
+- Qdrant Cloud
 - Gradio (initial)
 - Streamlit (current)
 

@@ -4,11 +4,13 @@ import numpy as np
 from langchain_community.document_loaders import TextLoader # raw text will get converted into a format that langchain can work with
 from langchain_text_splitters import CharacterTextSplitter #will split all the descriptions into meaningful chunks
 from langchain_community.embeddings import HuggingFaceEmbeddings #converting the chunks into document embeddings
-from langchain_community.vectorstores import Chroma #storing them in a vector database
+from langchain_community.vectorstores import Qdrant #storing them in a vector database
+from dotenv import load_dotenv
+import os
 
 huggingface_embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
-
+load_dotenv()
 
 books= pd.read_csv("books_with_emotions.csv")
 
@@ -23,9 +25,14 @@ books["large_thumbnail"] = np.where(
 raw_documents = TextLoader("tagged_description.txt").load()
 text_splitter = CharacterTextSplitter(chunk_size=0, chunk_overlap=0, separator="\n")
 documents = text_splitter.split_documents(raw_documents)
-db_books= Chroma.from_documents(
+
+db_books = Qdrant.from_documents(
     documents,
     embedding=huggingface_embeddings,
+    url=os.environ.get("URL"),
+    api_key=os.environ.get("API_KEY"),
+    collection_name="semantic-book-recommender",
+    timeout=60
 )
 
 def retrieve_semantic_recs(

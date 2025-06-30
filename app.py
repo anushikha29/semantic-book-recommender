@@ -159,7 +159,7 @@ Traditional book recommendation engines often overlook your current emotions or 
 - Python
 - LangChain
 - Hugging Face Transformers
-- Chroma (Vector DB)
+- Qdrant Cloud (Vector DB)
 - Gradio(Initial) and Streamlit(current)
 - [Kaggle dataset](https://www.kaggle.com/datasets/dylanjcastillo/7k-books-with-metadata)
                 
