@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+
+venv/
+.env/
+
+*.bin
+*.pt
+*.h5
+
+~/.cache/
+~/.huggingface/
+~/.chromadb/
+
+chroma_books_db/
+
+.DS_Store
