@@ -64,7 +64,7 @@ def retrieve_semantic_recs(
     elif tone == "Sad":
         book_recs.sort_values(by="sadness", ascending=False, inplace=True)
     elif tone == "Disturbing":
-        book_recs.sort_values(by="disgust", ascending=False, inplace=True)
+        book_recs.sort_values(by="digust", ascending=False, inplace=True)
     
     return book_recs
 
