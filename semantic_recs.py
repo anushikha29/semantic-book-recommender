@@ -4,15 +4,13 @@ import numpy as np
 from langchain_community.document_loaders import TextLoader # raw text will get converted into a format that langchain can work with
 from langchain_text_splitters import CharacterTextSplitter #will split all the descriptions into meaningful chunks
 from langchain_community.embeddings import HuggingFaceEmbeddings #converting the chunks into document embeddings
-from langchain_chroma import Chroma #storing them in a vector database
+from langchain_community.vectorstores import Chroma #storing them in a vector database
 
 huggingface_embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
 
-def load_books_data():
-    return pd.read_csv("books_with_emotions.csv")
 
-books = load_books_data()
+books= pd.read_csv("books_with_emotions.csv")
 
 books["large_thumbnail"] = books["thumbnail"] + "&fife=w800"
 
