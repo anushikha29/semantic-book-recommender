@@ -3,7 +3,7 @@ import numpy as np
 
 from langchain_community.document_loaders import TextLoader # raw text will get converted into a format that langchain can work with
 from langchain_text_splitters import CharacterTextSplitter #will split all the descriptions into meaningful chunks
-from langchain.embeddings import HuggingFaceEmbeddings #converting the chunks into document embeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings #converting the chunks into document embeddings
 from langchain_chroma import Chroma #storing them in a vector database
 
 huggingface_embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
