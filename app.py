@@ -32,6 +32,8 @@ def local_css():
 
 local_css()
 
+google_creds = st.secrets["google"]
+
 # ---- Lottie Loader Function ----
 def load_lottieurl(url:str):
     r = requests.get(url)

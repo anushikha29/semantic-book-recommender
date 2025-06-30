@@ -5,12 +5,13 @@ from langchain_community.document_loaders import TextLoader # raw text will get 
 from langchain_text_splitters import CharacterTextSplitter #will split all the descriptions into meaningful chunks
 from langchain_community.embeddings import HuggingFaceEmbeddings #converting the chunks into document embeddings
 from langchain_community.vectorstores import Qdrant #storing them in a vector database
-from dotenv import load_dotenv
-import os
+import streamlit as st
 
 huggingface_embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
-load_dotenv()
+
+qdrant_api_key = st.secrets["qdrant"]["API_KEY"]
+qdrant_url = st.secrets["qdrant"]["URL"]
 
 books= pd.read_csv("books_with_emotions.csv")
 
@@ -29,8 +30,8 @@ documents = text_splitter.split_documents(raw_documents)
 db_books = Qdrant.from_documents(
     documents,
     embedding=huggingface_embeddings,
-    url=os.environ.get("URL"),
-    api_key=os.environ.get("API_KEY"),
+    url=qdrant_url,
+    api_key=qdrant_api_key,
     collection_name="semantic-book-recommender",
     timeout=60
 )
