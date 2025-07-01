@@ -57,6 +57,9 @@ def retrieve_semantic_recs(
     """
     Retrieves semantic book recommendations, with optional filtering and sorting.
     """
+    if not query or not isinstance(query, str) or query.strip() == "":
+        return pd.DataFrame()
+    
     recs = db_books.similarity_search(query, k=initial_top_k)
 
     if not recs:
