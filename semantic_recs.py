@@ -9,12 +9,11 @@ from dotenv import load_dotenv
 import streamlit as st
 import os
 
-load_dotenv()
+# load_dotenv()
+# qdrant_api_key = os.getenv("API_KEY")
+# qdrant_url = os.getenv("URL")
 
 huggingface_embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-
-qdrant_api_key = os.getenv("API_KEY")
-qdrant_url = os.getenv("URL")
 
 qdrant_api_key = st.secrets["qdrant"]["API_KEY"]
 qdrant_url = st.secrets["qdrant"]["URL"]
@@ -33,13 +32,11 @@ raw_documents = TextLoader("tagged_description.txt").load()
 text_splitter = CharacterTextSplitter(chunk_size=0, chunk_overlap=0, separator="\n")
 documents = text_splitter.split_documents(raw_documents)
 
-db_books = Qdrant.from_documents(
-    documents,
+db_books = Qdrant.from_existing_collection(
+    collection_name="semantic-book-recommender",
     embedding=huggingface_embeddings,
     url=qdrant_url,
     api_key=qdrant_api_key,
-    collection_name="semantic-book-recommender",
-    timeout=60
 )
 
 def retrieve_semantic_recs(
@@ -57,11 +54,11 @@ def retrieve_semantic_recs(
     book_recs = books[books["isbn13"].isin(books_list)].head(final_top_k)
 
     if category != "All":
-        book_recs = book_recs[book_recs["simple_categories"] == category].head(final_top_k)
+        book_recs = book_recs[book_recs["simple_categories"].str.contains(category, case=False, na=False)].head(final_top_k)
     else:
         book_recs = book_recs.head(final_top_k)
 
-    
+        
     if tone == "Happy":
         book_recs.sort_values(by="joy", ascending=False, inplace=True)
     elif tone == "Surprising":
