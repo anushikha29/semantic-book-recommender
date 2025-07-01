@@ -5,10 +5,16 @@ from langchain_community.document_loaders import TextLoader # raw text will get 
 from langchain_text_splitters import CharacterTextSplitter #will split all the descriptions into meaningful chunks
 from langchain_community.embeddings import HuggingFaceEmbeddings #converting the chunks into document embeddings
 from langchain_community.vectorstores import Qdrant #storing them in a vector database
+from dotenv import load_dotenv
 import streamlit as st
+import os
+
+load_dotenv()
 
 huggingface_embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
+qdrant_api_key = os.getenv("API_KEY")
+qdrant_url = os.getenv("URL")
 
 qdrant_api_key = st.secrets["qdrant"]["API_KEY"]
 qdrant_url = st.secrets["qdrant"]["URL"]
@@ -44,6 +50,8 @@ def retrieve_semantic_recs(
         final_top_k: int = 16,
 ) -> pd.DataFrame:
     
+    initial_top_k = max(initial_top_k, final_top_k * 3)
+
     recs = db_books.similarity_search(query, k=initial_top_k)
     books_list = [int(rec.page_content.strip('"').split()[0]) for rec in recs]
     book_recs = books[books["isbn13"].isin(books_list)].head(final_top_k)
