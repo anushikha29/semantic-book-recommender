@@ -9,6 +9,16 @@ from dotenv import load_dotenv
 import streamlit as st
 import os
 
+tone_mapping = {
+    "Happy": "joy",
+    "Surprising": "surprise",
+    "Angry": "anger",
+    "Suspenseful": "fear",
+    "Sad": "sadness",
+    "Disturbing": "digust"
+}
+
+
 # load_dotenv()
 # qdrant_api_key = os.getenv("API_KEY")
 # qdrant_url = os.getenv("URL")
@@ -22,10 +32,8 @@ books= pd.read_csv("books_with_emotions.csv")
 
 books["large_thumbnail"] = books["thumbnail"] + "&fife=w800"
 
-books["large_thumbnail"] = np.where(
-    books["large_thumbnail"].isna(),
-    "no-cover-found.jpg",
-    books["large_thumbnail"]
+books["large_thumbnail"] = books["thumbnail"].fillna("").apply(
+    lambda x: x + "&fife=w800" if x.strip() != "" else "no-cover-found.jpg"
 )
 
 raw_documents = TextLoader("tagged_description.txt").load()
@@ -40,38 +48,43 @@ db_books = Qdrant.from_existing_collection(
 )
 
 def retrieve_semantic_recs(
-        query: str,
-        category: str = None,
-        tone: str = None,
-        initial_top_k: int = 50,
-        final_top_k: int = 16,
+    query: str,
+    category: str = None,
+    tone: str = None,
+    initial_top_k: int = 150,
+    final_top_k: int = 50,
 ) -> pd.DataFrame:
-    
-    initial_top_k = max(initial_top_k, final_top_k * 3)
-
+    """
+    Retrieves semantic book recommendations, with optional filtering and sorting.
+    """
     recs = db_books.similarity_search(query, k=initial_top_k)
-    books_list = [int(rec.page_content.strip('"').split()[0]) for rec in recs]
-    book_recs = books[books["isbn13"].isin(books_list)].head(final_top_k)
 
-    if category != "All":
-        book_recs = book_recs[book_recs["simple_categories"].str.contains(category, case=False, na=False)].head(final_top_k)
-    else:
-        book_recs = book_recs.head(final_top_k)
+    if not recs:
+        st.warning("No semantic matches found for your query. Try a broader query.")
+        return pd.DataFrame()
 
-        
-    if tone == "Happy":
-        book_recs.sort_values(by="joy", ascending=False, inplace=True)
-    elif tone == "Surprising":
-        book_recs.sort_values(by="surprise", ascending=False, inplace=True)
-    elif tone == "Angry":
-        book_recs.sort_values(by="anger", ascending=False, inplace=True)
-    elif tone == "Suspenseful":
-        book_recs.sort_values(by="fear", ascending=False, inplace=True)
-    elif tone == "Sad":
-        book_recs.sort_values(by="sadness", ascending=False, inplace=True)
-    elif tone == "Disturbing":
-        book_recs.sort_values(by="digust", ascending=False, inplace=True)
     
+    books_list = [int(rec.page_content.strip('"').split()[0]) for rec in recs]
+    book_recs = books[books["isbn13"].isin(books_list)]
+
+    if category and category != "All":
+        book_recs = book_recs[book_recs["simple_categories"] == category]
+
+    if tone and tone != "All":
+        emotion_column = tone_mapping.get(tone)
+        if emotion_column and emotion_column in book_recs.columns:
+            book_recs = book_recs[book_recs[emotion_column] > 0]
+            book_recs = book_recs.sort_values(by=emotion_column, ascending=False)
+
+
+    book_recs = book_recs.head(final_top_k)
+
+    if book_recs.empty:
+        st.warning(
+            "No books matched your specific filters. Showing top semantic matches instead."
+        )
+        book_recs = books[books["isbn13"].isin(books_list)].head(final_top_k)
+
     return book_recs
 
 def recommend_books(
