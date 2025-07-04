@@ -9,7 +9,7 @@ A semantic, emotion-aware book recommender system using Hugging Face, LangChain,
 - Semantic search over book descriptions
 - Zero-shot classification to handle distinct and missing categories (~79% accuracy)
 - Emotion detection on book descriptions for flexible filtering
-- Vector database (Chroma) for fast retrieval
+- Vector database (Qdrant) for fast retrieval
 - Gradio interface for interactive exploration
 - Streamlit Deployment 
 
@@ -43,10 +43,13 @@ Gradio:
 ```
 python gradio-dashboard.py
 ```
+![image](https://github.com/user-attachments/assets/d9261f31-b704-4a14-97fb-35529b3da178)
+
 Streamlit:
 ```
 streamlit run app.py
 ```
+![image](https://github.com/user-attachments/assets/9e6a2f34-11cd-490e-871a-f804a56efc61)
 
 ## 🌱 Future Improvements
 ✨ I plan to continue improving this project by adding personalized reading analytics, smarter emotion-based recommendations, and collaborative book club features in the future.
