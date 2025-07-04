@@ -1,0 +1,17 @@
+
+.git
+
+venv
+.venv
+env
+
+__pycache__
+*.pyc
+
+*.csv
+*.pkl
+*.pt
+
+.vscode
+.idea
+*.DS_Store
