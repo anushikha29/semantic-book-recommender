@@ -36,9 +36,9 @@ books["large_thumbnail"] = books["thumbnail"].fillna("").apply(
     lambda x: x + "&fife=w800" if x.strip() != "" else "no-cover-found.jpg"
 )
 
-raw_documents = TextLoader("tagged_description.txt").load()
-text_splitter = CharacterTextSplitter(chunk_size=0, chunk_overlap=0, separator="\n")
-documents = text_splitter.split_documents(raw_documents)
+#raw_documents = TextLoader("tagged_description.txt").load()
+#text_splitter = CharacterTextSplitter(chunk_size=0, chunk_overlap=0, separator="\n")
+#documents = text_splitter.split_documents(raw_documents)
 
 db_books = Qdrant.from_existing_collection(
     collection_name="semantic-book-recommender",
