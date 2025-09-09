@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v4
-        
+
       - name: DEBUG - Show requirements.txt content
         run: cat requirements.txt
 
@@ -35,7 +35,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            docker stop $(docker ps -a -q)
-            docker rm $(docker ps -a -q)
+            docker stop $(docker ps -a -q) || true
+            docker rm $(docker ps -a -q) || true
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/book-recommender:latest
             docker run -d -p 8501:8501 ${{ secrets.DOCKERHUB_USERNAME }}/book-recommender:latest

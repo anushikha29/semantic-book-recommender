@@ -1,18 +1,23 @@
-#stage 1
-FROM python:3.10 AS builder
+#Stage 1
+FROM python:3.10 as builder
 
 WORKDIR /app
 
+RUN pip install --upgrade pip build
+
 COPY requirements.txt .
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip wheel --no-cache-dir --wheel-dir /wheels -r requirements.txt
 
-# stage 2 
+
+# Stage 2: The final, slim stage
 FROM python:3.10-slim
 
 WORKDIR /app
 
-COPY --from=builder /usr/local/lib/python3.10/site-packages/ /usr/local/lib/python3.10/site-packages/
+COPY --from=builder /wheels /wheels
+
+RUN pip install --no-cache-dir /wheels/*
 
 COPY --from=builder /usr/local/bin/ /usr/local/bin/
 
