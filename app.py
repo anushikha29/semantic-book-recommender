@@ -152,7 +152,7 @@ elif page == "About":
     st.markdown("""
 Welcome to **Semantic Book Recommender**, an intelligent tool designed to help you discover books based on **meaning, mood, and themes** and built straight from the heart of an avid reader 💛
 
-### 🚀 Why This Project?
+### 🚀 Why Did I Build This Project?
 Ever since I can remember, books have been more than just stories — they’ve been a source of comfort, adventure, and a way of understanding life.  
 As a reader myself, I’ve often wished for recommendations that *understood* what I was truly in the mood for — whether something emotionally rich, suspenseful, or full of joy.
 This project was my way of combining that love for literature with my passion for technology.  
