@@ -11,6 +11,9 @@ jobs:
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v4
+        
+      - name: DEBUG - Show requirements.txt content
+        run: cat requirements.txt
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
