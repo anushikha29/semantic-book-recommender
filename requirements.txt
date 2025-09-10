@@ -1,5 +1,6 @@
 streamlit
 pandas
+torch
 sentence-transformers
 langchain-community
 langchain-text-splitters
