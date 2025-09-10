@@ -1,4 +1,4 @@
-# Stage 1
+#Stage 1
 FROM python:3.10 as builder
 
 WORKDIR /app
@@ -15,13 +15,12 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates curl netbase && \
-    rm -rf /var/lib/apt/lists/*
-
 COPY --from=builder /wheels /wheels
+
 RUN pip install --no-cache-dir /wheels/*
+
+COPY --from=builder /usr/local/bin/ /usr/local/bin/
 
 COPY . .
 
-CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+CMD ["streamlit", "run", "app.py", "--server.address=0.0.0.0"]
