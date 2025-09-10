@@ -10,9 +10,6 @@ import json
 
 from semantic_recs import retrieve_semantic_recs
 
-google_creds_json = os.environ.get("GOOGLE_CREDENTIALS_JSON")
-google_creds = json.loads(google_creds_json)
-
 
 # ---- custom css ----
 def local_css():
@@ -140,8 +137,10 @@ if page == "Home":
 # ---- About Page ----
 elif page == "About":
 
+    google_creds_json = os.environ.get("GOOGLE_CREDENTIALS_JSON")
+    google_creds = json.loads(google_creds_json)
 
-    google_creds = st.secrets["google"]
+    # google_creds = st.secrets["google"]
 
     scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',
          "https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]

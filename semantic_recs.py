@@ -18,16 +18,6 @@ tone_mapping = {
     "Disturbing": "digust"
 }
 
-
-load_dotenv()
-qdrant_api_key = os.getenv("QDRANT_API_KEY")
-qdrant_url = os.getenv("QDRANT_URL")
-
-huggingface_embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-
-# qdrant_api_key = st.secrets["qdrant"]["API_KEY"]
-# qdrant_url = st.secrets["qdrant"]["URL"]
-
 books= pd.read_csv("books_with_emotions.csv")
 
 books["large_thumbnail"] = books["thumbnail"] + "&fife=w800"
@@ -36,16 +26,45 @@ books["large_thumbnail"] = books["thumbnail"].fillna("").apply(
     lambda x: x + "&fife=w800" if x.strip() != "" else "no-cover-found.jpg"
 )
 
+@st.cache_resource
+def get_qdrant_client():
+    """Initializes and returns the Qdrant client, cached for performance."""
+    qdrant_api_key = os.environ.get("QDRANT_API_KEY")
+    qdrant_url = os.environ.get("QDRANT_URL")
+
+    if not qdrant_api_key or not qdrant_url:
+        st.error("Qdrant credentials are not set in the environment.")
+        return None
+
+    huggingface_embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+
+    db_client = Qdrant.from_existing_collection(
+        collection_name="semantic-book-recommender",
+        embedding=huggingface_embeddings,
+        url=qdrant_url,
+        api_key=qdrant_api_key,
+    )
+    return db_client
+
+# load_dotenv()
+# qdrant_api_key = os.getenv("QDRANT_API_KEY")
+# qdrant_url = os.getenv("QDRANT_URL")
+
+# huggingface_embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+
+# qdrant_api_key = st.secrets["qdrant"]["API_KEY"]
+# qdrant_url = st.secrets["qdrant"]["URL"]
+
 #raw_documents = TextLoader("tagged_description.txt").load()
 #text_splitter = CharacterTextSplitter(chunk_size=0, chunk_overlap=0, separator="\n")
 #documents = text_splitter.split_documents(raw_documents)
 
-db_books = Qdrant.from_existing_collection(
-    collection_name="semantic-book-recommender",
-    embedding=huggingface_embeddings,
-    url=qdrant_url,
-    api_key=qdrant_api_key,
-)
+# db_books = Qdrant.from_existing_collection(
+#     collection_name="semantic-book-recommender",
+#     embedding=huggingface_embeddings,
+#     url=qdrant_url,
+#     api_key=qdrant_api_key,
+# )
 
 def retrieve_semantic_recs(
     query: str,
@@ -57,6 +76,11 @@ def retrieve_semantic_recs(
     """
     Retrieves semantic book recommendations, with optional filtering and sorting.
     """
+
+    db_books = get_qdrant_client()
+    if db_books is None:
+        return pd.DataFrame()
+    
     if not query or not isinstance(query, str) or query.strip() == "":
         return pd.DataFrame()
     
