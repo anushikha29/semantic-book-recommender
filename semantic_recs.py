@@ -19,9 +19,12 @@ tone_mapping = {
 }
 
 
-load_dotenv()
-qdrant_api_key = os.environ.get("QDRANT_API_KEY")
-qdrant_url = os.environ.get("QDRANT_URL")
+# load_dotenv()
+# qdrant_api_key = os.environ.get("QDRANT_API_KEY")
+# qdrant_url = os.environ.get("QDRANT_URL")
+
+qdrant_api_key = st.secrets["qdrant"]["API_KEY"]
+qdrant_url = st.secrets["qdrant"]["URL"]
 
 
 huggingface_embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")

@@ -45,7 +45,7 @@ def load_lottieurl(url:str):
 book_lottie = load_lottieurl("https://lottie.host/944c515c-388b-488a-98d0-7698316553a2/rtwz5tnyH2.json")
 
 # ---- Sidebar Navigation ----
-st.sidebar.title("📚 My Semantic Book Recommender")
+st.sidebar.title("📚 Semantic Book Recommender")
 page = st.sidebar.radio("Navigation", ["Home", "About", "Usage"])
 
 st.sidebar.markdown("---")
@@ -89,7 +89,7 @@ if page == "Home":
     st.markdown("---")
     center_button = st.columns([1, 2, 1])[1]
     with center_button:
-        find_rec = st.button("🚀 Find as many Recommendations as you want", use_container_width=True)
+        find_rec = st.button("🚀 Find Recommendations", use_container_width=True)
 
     if find_rec:
         if description.strip() == "":
@@ -137,10 +137,10 @@ if page == "Home":
 # ---- About Page ----
 elif page == "About":
 
-    google_creds_json = os.environ.get("GOOGLE_CREDENTIALS_JSON")
-    google_creds = json.loads(google_creds_json)
+    # google_creds_json = os.environ.get("GOOGLE_CREDENTIALS_JSON")
+    # google_creds = json.loads(google_creds_json)
 
-    # google_creds = st.secrets["google"]
+    google_creds = st.secrets["google"]
 
     scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',
          "https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
