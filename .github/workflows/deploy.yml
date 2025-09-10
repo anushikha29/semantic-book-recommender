@@ -12,23 +12,22 @@ jobs:
       - name: Checkout repository code
         uses: actions/checkout@v4
 
-      - name: DEBUG - Show requirements.txt content
-        run: cat requirements.txt
-
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build and push Docker image with unique tag
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/book-recommender:latest
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/book-recommender:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/book-recommender:latest
 
-      - name: Deploy to EC2
+      - name: Deploy to EC2 using unique tag
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -38,11 +37,12 @@ jobs:
           script: |
             docker stop $(docker ps -a -q) || true
             docker rm $(docker ps -a -q) || true
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/book-recommender:latest
+            
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/book-recommender:${{ github.sha }}
             
             docker run -d -p 8501:8501 \
               -e QDRANT_API_KEY='${{ secrets.QDRANT_API_KEY }}' \
               -e QDRANT_URL='${{ secrets.QDRANT_URL }}' \
               -e GOOGLE_CREDENTIALS_JSON='${{ secrets.GOOGLE_CREDENTIALS_JSON }}' \
               --name book-recommender-app \
-              ${{ secrets.DOCKERHUB_USERNAME }}/book-recommender:latest
+              ${{ secrets.DOCKERHUB_USERNAME }}/book-recommender:${{ github.sha }}
