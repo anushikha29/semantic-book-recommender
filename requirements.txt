@@ -1,17 +1,12 @@
 streamlit
 pandas
 sentence-transformers
-torch
-# LangChain components used at runtime
 langchain-community
 langchain-text-splitters
 langchain-qdrant
 qdrant-client
-# For Google Sheets integration
 gspread
 oauth2client
-# For Lottie animations
 streamlit-lottie
 requests
-# For .env file support
 python-dotenv
