@@ -26,9 +26,6 @@ qdrant_url = os.environ.get("QDRANT_URL")
 
 huggingface_embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
-# qdrant_api_key = st.secrets["qdrant"]["API_KEY"]
-# qdrant_url = st.secrets["qdrant"]["URL"]
-
 books= pd.read_csv("books_with_emotions.csv")
 
 books["large_thumbnail"] = books["thumbnail"] + "&fife=w800"
