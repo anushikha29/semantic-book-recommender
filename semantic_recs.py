@@ -19,14 +19,14 @@ tone_mapping = {
 }
 
 
-# load_dotenv()
-# qdrant_api_key = os.getenv("API_KEY")
-# qdrant_url = os.getenv("URL")
+load_dotenv()
+qdrant_api_key = os.getenv("QDRANT_API_KEY")
+qdrant_url = os.getenv("QDRANT_URL")
 
 huggingface_embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
-qdrant_api_key = st.secrets["qdrant"]["API_KEY"]
-qdrant_url = st.secrets["qdrant"]["URL"]
+# qdrant_api_key = st.secrets["qdrant"]["API_KEY"]
+# qdrant_url = st.secrets["qdrant"]["URL"]
 
 books= pd.read_csv("books_with_emotions.csv")
 

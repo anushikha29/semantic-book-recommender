@@ -5,8 +5,14 @@ from streamlit_lottie import st_lottie
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
+import os
+import json
 
 from semantic_recs import retrieve_semantic_recs
+
+google_creds_json = os.environ.get("GOOGLE_CREDENTIALS_JSON")
+google_creds = json.loads(google_creds_json)
+
 
 # ---- custom css ----
 def local_css():

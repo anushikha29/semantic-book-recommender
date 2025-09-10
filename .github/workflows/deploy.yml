@@ -36,12 +36,13 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           timeout: 30m
           script: |
-            mkdir -p /home/ubuntu/semantic-book-recommender/.streamlit
-            
             docker stop $(docker ps -a -q) || true
             docker rm $(docker ps -a -q) || true
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/book-recommender:latest
             
             docker run -d -p 8501:8501 \
-              -v /home/ubuntu/semantic-book-recommender/.streamlit/secrets.toml:/app/.streamlit/secrets.toml \
+              -e QDRANT_API_KEY='${{ secrets.QDRANT_API_KEY }}' \
+              -e QDRANT_URL='${{ secrets.QDRANT_URL }}' \
+              -e GOOGLE_CREDENTIALS_JSON='${{ secrets.GOOGLE_CREDENTIALS_JSON }}' \
+              --name book-recommender-app \
               ${{ secrets.DOCKERHUB_USERNAME }}/book-recommender:latest
