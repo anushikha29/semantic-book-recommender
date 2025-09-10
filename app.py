@@ -6,6 +6,7 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 import os
+import base64
 import json
 
 from semantic_recs import retrieve_semantic_recs
@@ -137,7 +138,8 @@ if page == "Home":
 # ---- About Page ----
 elif page == "About":
 
-    google_creds_json = os.environ.get("GOOGLE_CREDENTIALS_JSON")
+    google_creds_b64 = os.environ.get("GOOGLE_CREDENTIALS_B64")
+    google_creds_json = base64.b64decode(google_creds_b64).decode('utf-8')
     google_creds = json.loads(google_creds_json)
 
     # google_creds = st.secrets["google"]
