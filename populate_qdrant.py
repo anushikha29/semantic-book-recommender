@@ -6,15 +6,15 @@ from langchain_text_splitters import CharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Qdrant
 
-# load_dotenv()
-# qdrant_api_key = os.getenv("API_KEY")
-# qdrant_url = os.getenv("URL")
+load_dotenv()
+qdrant_api_key = os.getenv("API_KEY")
+qdrant_url = os.getenv("URL")
 
 huggingface_embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
 
-qdrant_api_key = st.secrets["qdrant"]["API_KEY"]
-qdrant_url = st.secrets["qdrant"]["URL"]
+# qdrant_api_key = st.secrets["qdrant"]["API_KEY"]
+# qdrant_url = st.secrets["qdrant"]["URL"]
 
 raw_documents = TextLoader("tagged_description.txt").load()
 text_splitter = CharacterTextSplitter(chunk_size=0, chunk_overlap=0, separator="\n")

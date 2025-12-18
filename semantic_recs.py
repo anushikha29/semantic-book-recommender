@@ -4,7 +4,7 @@ import numpy as np
 from langchain_community.document_loaders import TextLoader # raw text will get converted into a format that langchain can work with
 from langchain_text_splitters import CharacterTextSplitter #will split all the descriptions into meaningful chunks
 from langchain_community.embeddings import HuggingFaceEmbeddings #converting the chunks into document embeddings
-from langchain_qdrant import Qdrant #storing them in a vector database
+from langchain_qdrant import QdrantVectorStore #storing them in a vector database
 from dotenv import load_dotenv
 import streamlit as st
 import os
@@ -41,7 +41,7 @@ books["large_thumbnail"] = books["thumbnail"].fillna("").apply(
 #text_splitter = CharacterTextSplitter(chunk_size=0, chunk_overlap=0, separator="\n")
 #documents = text_splitter.split_documents(raw_documents)
 
-db_books = Qdrant.from_existing_collection(
+db_books = QdrantVectorStore.from_existing_collection(
     collection_name="semantic-book-recommender",
     embedding=huggingface_embeddings,
     url=qdrant_url,
